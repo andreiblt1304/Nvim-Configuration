@@ -197,7 +197,7 @@ require('lazy').setup({
   --     vim.cmd.colorscheme 'rose-pine'
   --   end,
   -- },
-  {
+  { 
    -- colorscheme 
     'rebelot/kanagawa.nvim', name = 'kanagawa',
     priority = 1000,
@@ -603,7 +603,7 @@ local servers = {
 -- Setup neovim lua configuration
 require('neodev').setup()
 
--- nvim-cmp supports additional completion capabilities, so broadcast that to servers
+-- nvim-cmp supports additional completion capabilities, so broadcast that to serversFont
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
