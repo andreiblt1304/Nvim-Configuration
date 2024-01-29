@@ -212,11 +212,14 @@ require('lazy').setup({
     -- See `:help lualine.txt`
     opts = {
       options = {
-        icons_enabled = false,
+        icons_enabled = true,
         theme = 'onedark',
         component_separators = '|',
         section_separators = '',
       },
+      sections = {
+        lualine_c = { {'filename', path = 2} },
+      }
     },
   },
 
@@ -625,6 +628,18 @@ mason_lspconfig.setup_handlers {
   end,
 }
 
+-- {
+--  "jay-babu/mason-nvim-dap.nvim",
+--  -- overrides `require("mason-nvim-dap").setup(...)`
+--  opts = function(_, opts)
+--    -- add more things to the ensure_installed table protecting against community packs modifying it
+--    opts.ensure_installed = require("astronvim.utils").list_insert_unique(opts.ensure_installed, {
+--      "codelldb",
+--      "cpptools",
+--    })
+--  end,
+-- }
+--
 -- [[ Configure nvim-cmp ]]
 -- See `:help cmp`
 local cmp = require 'cmp'
