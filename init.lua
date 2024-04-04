@@ -68,11 +68,36 @@ vim.opt.rtp:prepend(lazypath)
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
+{
+    "junegunn/fzf",
+    build = function()
+      vim.fn["fzf#install"]()
+    end,
+  },
+  {
+    'jose-elias-alvarez/null-ls.nvim',
+    requires = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      require("null-ls").setup({})
+      
+    end
+  },
+  {
+    "linrongbin16/fzfx.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons", 'junegunn/fzf' },
 
+    -- specify version to avoid break changes
+    version = 'v5.*',
+
+    config = function()
+      require("fzfx").setup()
+    end,
+  },
   -- Git related plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
-
+  {"junegunn/fzf", dir = "~/.fzf", run = "./install --all", lazy = false},
+  {"junegunn/fzf.vim"},
   -- Detect tabstop and shiftwidth automatically
   'tpope/vim-sleuth',
 
@@ -111,9 +136,18 @@ require('lazy').setup({
       'rafamadriz/friendly-snippets',
     },
   },
-
+  {
+      's1n7ax/nvim-window-picker',
+      name = 'window-picker',
+      event = 'VeryLazy',
+      version = '2.*',
+      config = function()
+          require'window-picker'.setup()
+      end,
+  },
   -- Useful plugin to show you pending keybinds.
   { 'folke/which-key.nvim', opts = {} },
+  { 'null-ls' },
   {
     -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
@@ -135,6 +169,7 @@ require('lazy').setup({
           vim.keymap.set(mode, l, r, opts)
         end
 
+        vim.api.nvim_set_keymap('n', '<leader>lg', "<cmd>FzfxLiveGrep<CR>", { noremap = true, silent = true })
         -- Navigation
         map({ 'n', 'v' }, ']c', function()
           if vim.wo.diff then
@@ -587,7 +622,7 @@ require('mason-lspconfig').setup()
 --  define the property 'filetypes' to the map in question.
 local servers = {
   -- clangd = {},
-  -- gopls = {},
+  gopls = {},
   -- pyright = {},
   rust_analyzer = {},
   -- tsserver = {},
