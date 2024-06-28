@@ -12,14 +12,20 @@ return {
       'MunifTanjim/nui.nvim',
     },
     config = function()
-      -- require('neo-tree').setup {
-      --   -- your config options here
-      --   filesystem = {
-      --     follow_current_file = true,
-      --     hijack_netrw_behavior = 'open_default',
-      --     use_libuv_file_watcher = true,
-      --   },
-      -- }
+      require('neo-tree').setup {
+        -- your config options here
+        filesystem = {
+          follow_current_file = true,
+          hijack_netrw_behavior = 'open_default',
+          use_libuv_file_watcher = true,
+        },
+      }
+      vim.api.nvim_set_keymap(
+        'n', -- normal mode
+        '<Leader>ft', -- leader + f + t
+        ':Neotree toggle<CR>', -- command to toggle Neo-tree
+        { noremap = true, silent = true } -- options: no remapping, silent
+      )
     end,
   },
   {
