@@ -19,6 +19,9 @@ return {
           hijack_netrw_behavior = 'open_default',
           use_libuv_file_watcher = true,
         },
+        window = {
+          position = 'float',
+        },
       }
       vim.api.nvim_set_keymap(
         'n', -- normal mode
