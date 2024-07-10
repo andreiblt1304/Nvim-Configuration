@@ -1,7 +1,3 @@
--- You can add your own plugins here or in other files in this directory!
---  I promise not to create any merge conflicts in this directory :)
---
--- See the kickstart.nvim README for more information
 return {
   {
     'nvim-neo-tree/neo-tree.nvim',
@@ -38,19 +34,6 @@ return {
     end,
   },
   {
-    dependencies = { 'nvim-lua/plenary.nvim' },
-    keys = {
-      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
-    },
-    config = function()
-      vim.g.lazygit_floating_window_winblend = 0 -- transparency of floating window
-      vim.g.lazygit_floating_window_scaling_factor = 0.9 -- scaling factor for floating window
-      vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' } -- border characters
-      vim.g.lazygit_floating_window_use_plenary = 0 -- use plenary.nvim to manage floating window if available
-      vim.g.lazygit_use_neovim_remote = 1 -- use neovim-remote if available
-    end,
-  },
-  {
     'neovim/nvim-lspconfig',
     dependencies = {
       'williamboman/mason.nvim',
@@ -63,10 +46,8 @@ return {
       require('mason-lspconfig').setup {
         ensure_installed = { 'rust_analyzer' }, -- Add other LSP servers here
       }
-
       local lspconfig = require 'lspconfig'
       local inlayhints = require 'lsp-inlayhints'
-
       -- Enable inlay hints for Rust Analyzer
       lspconfig.rust_analyzer.setup {
         settings = {
@@ -83,9 +64,7 @@ return {
           inlayhints.on_attach(client, bufnr)
         end,
       }
-
       -- Add additional LSP server configurations here
-
       -- Enable inlay hints for other servers if supported
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('UserLspConfig', {}),
@@ -97,6 +76,21 @@ return {
           -- other lsp configurations you might want
         end,
       })
+    end,
+  },
+  {
+    'kdheepak/lazygit.nvim',
+    requires = { 'nvim-lua/plenary.nvim' },
+    cmd = { 'LazyGit', 'LazyGitConfig', 'LazyGitCurrentFile', 'LazyGitFilter', 'LazyGitFilterCurrentFile' },
+    keys = {
+      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
+    },
+    config = function()
+      vim.g.lazygit_floating_window_winblend = 0 -- transparency of floating window
+      vim.g.lazygit_floating_window_scaling_factor = 0.9 -- scaling factor for floating window
+      vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' } -- border characters
+      vim.g.lazygit_floating_window_use_plenary = 0 -- use plenary.nvim to manage floating window if available
+      vim.g.lazygit_use_neovim_remote = 1 -- use neovim-remote if available
     end,
   },
 }
