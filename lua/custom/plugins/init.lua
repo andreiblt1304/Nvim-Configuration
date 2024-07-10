@@ -38,6 +38,19 @@ return {
     end,
   },
   {
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    keys = {
+      { '<leader>lg', '<cmd>LazyGit<cr>', desc = 'LazyGit' },
+    },
+    config = function()
+      vim.g.lazygit_floating_window_winblend = 0 -- transparency of floating window
+      vim.g.lazygit_floating_window_scaling_factor = 0.9 -- scaling factor for floating window
+      vim.g.lazygit_floating_window_border_chars = { '╭', '─', '╮', '│', '╯', '─', '╰', '│' } -- border characters
+      vim.g.lazygit_floating_window_use_plenary = 0 -- use plenary.nvim to manage floating window if available
+      vim.g.lazygit_use_neovim_remote = 1 -- use neovim-remote if available
+    end,
+  },
+  {
     'neovim/nvim-lspconfig',
     dependencies = {
       'williamboman/mason.nvim',
