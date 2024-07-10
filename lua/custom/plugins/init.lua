@@ -93,4 +93,93 @@ return {
       vim.g.lazygit_use_neovim_remote = 1 -- use neovim-remote if available
     end,
   },
+  {
+    'mfussenegger/nvim-dap',
+    config = function()
+      local dap = require 'dap'
+      dap.adapters.lldb = {
+        type = 'executable',
+        command = '/usr/bin/lldb-vscode', -- Adjust to your lldb-vscode path
+        name = 'lldb',
+      }
+      dap.configurations.rust = {
+        {
+          name = 'Launch',
+          type = 'lldb',
+          request = 'launch',
+          program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopOnEntry = false,
+          args = {},
+          runInTerminal = false,
+        },
+      }
+      vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
+
+      -- Keybindings for nvim-dap
+      vim.api.nvim_set_keymap('n', '<F5>', '<Cmd>lua require("dap").continue()<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<F10>', '<Cmd>lua require("dap").step_over()<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<F11>', '<Cmd>lua require("dap").step_into()<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<F12>', '<Cmd>lua require("dap").step_out()<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<Leader>b', '<Cmd>lua require("dap").toggle_breakpoint()<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap(
+        'n',
+        '<Leader>B',
+        '<Cmd>lua require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))<CR>',
+        { noremap = true, silent = true }
+      )
+      vim.api.nvim_set_keymap(
+        'n',
+        '<Leader>lp',
+        '<Cmd>lua require("dap").set_breakpoint(nil, nil, vim.fn.input("Log point message: "))<CR>',
+        { noremap = true, silent = true }
+      )
+      vim.api.nvim_set_keymap('n', '<Leader>dr', '<Cmd>lua require("dap").repl.open()<CR>', { noremap = true, silent = true })
+      vim.api.nvim_set_keymap('n', '<Leader>dl', '<Cmd>lua require("dap").run_last()<CR>', { noremap = true, silent = true })
+    end,
+  },
+  { 'nvim-neotest/nvim-nio' },
+  {
+    'rcarriga/nvim-dap-ui',
+    requires = {
+      'mfussenegger/nvim-dap',
+      'nvim-neotest/nvim-nio', -- Add nvim-nio as a dependency
+    },
+    config = function()
+      local dap, dapui = require 'dap', require 'dapui'
+      dapui.setup()
+      dap.listeners.after.event_initialized['dapui_config'] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated['dapui_config'] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited['dapui_config'] = function()
+        dapui.close()
+      end
+    end,
+  },
+  {
+    'simrat39/rust-tools.nvim',
+    requires = { 'neovim/nvim-lspconfig', 'mfussenegger/nvim-dap' },
+    config = function()
+      local rt = require 'rust-tools'
+      rt.setup {
+        server = {
+          on_attach = function(_, bufnr)
+            vim.keymap.set('n', '<C-space>', rt.hover_actions.hover_actions, { buffer = bufnr })
+            vim.keymap.set('n', '<Leader>a', rt.code_action_group.code_action_group, { buffer = bufnr })
+          end,
+        },
+        dap = {
+          adapter = require('rust-tools.dap').get_codelldb_adapter(
+            '/path/to/codelldb', -- Path to codelldb executable
+            '/path/to/lldb/lib/liblldb.so' -- Path to liblldb shared library
+          ),
+        },
+      }
+    end,
+  },
 }
