@@ -182,4 +182,38 @@ return {
       }
     end,
   },
+  {
+    'akinsho/toggleterm.nvim',
+    config = function()
+      require('toggleterm').setup {
+        size = function(term)
+          if term.direction == 'horizontal' then
+            return vim.o.lines * 0.5
+          elseif term.direction == 'vertical' then
+            return vim.o.columns * 0.5
+          end
+        end,
+        open_mapping = [[<c-\>]],
+        hide_numbers = true,
+        shade_filetypes = {},
+        shade_terminals = true,
+        shading_factor = '1',
+        start_in_insert = true,
+        insert_mappings = true,
+        persist_size = true,
+        direction = 'vertical',
+        close_on_exit = true,
+        shell = vim.o.shell,
+        float_opts = {
+          border = 'curved',
+          winblend = 0,
+          highlights = {
+            border = 'Normal',
+            background = 'Normal',
+          },
+        },
+      }
+      vim.api.nvim_set_keymap('n', '<C-\\><C-n>', '<cmd>ToggleTerm direction=float<cr>', { noremap = true, silent = true })
+    end,
+  },
 }
