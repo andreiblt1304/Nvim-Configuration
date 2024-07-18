@@ -216,4 +216,13 @@ return {
       vim.api.nvim_set_keymap('n', '<C-\\><C-n>', '<cmd>ToggleTerm direction=float<cr>', { noremap = true, silent = true })
     end,
   },
+  {
+    's1n7ax/nvim-window-picker',
+    name = 'window-picker',
+    event = 'VeryLazy',
+    version = '2.*',
+    config = function()
+      require('window-picker').setup()
+    end,
+  },
 }

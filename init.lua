@@ -786,7 +786,15 @@ require('lazy').setup({
       vim.cmd.hi 'Comment gui=none'
     end,
   },
-
+  -- {
+  --   'bluz71/vim-moonfly-colors',
+  --   name = 'moonfly',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd 'colorscheme moonfly'
+  --   end,
+  -- },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
