@@ -28,6 +28,13 @@ return {
     end,
   },
   {
+    'simrat39/rust-tools.nvim',
+    ft = 'rust',
+    opts = function()
+      return require 'custom.configs.rust-tools'
+    end,
+  },
+  {
     'kyazdani42/nvim-web-devicons',
     config = function()
       require('nvim-web-devicons').setup { default = true }
@@ -46,24 +53,24 @@ return {
       require('mason-lspconfig').setup {
         ensure_installed = { 'rust_analyzer' }, -- Add other LSP servers here
       }
-      local lspconfig = require 'lspconfig'
-      local inlayhints = require 'lsp-inlayhints'
+      -- local lspconfig = require 'lspconfig'
+      -- local inlayhints = require 'lsp-inlayhints'
       -- Enable inlay hints for Rust Analyzer
-      lspconfig.rust_analyzer.setup {
-        settings = {
-          ['rust-analyzer'] = {
-            inlayHints = {
-              enable = true,
-              typeHints = true,
-              parameterHints = true,
-              chainingHints = true,
-            },
-          },
-        },
-        on_attach = function(client, bufnr)
-          inlayhints.on_attach(client, bufnr)
-        end,
-      }
+      -- lspconfig.rust_analyzer.setup {
+      --   settings = {
+      --     ['rust-analyzer'] = {
+      --       inlayHints = {
+      --         enable = true,
+      --         typeHints = true,
+      --         parameterHints = true,
+      --         chainingHints = true,
+      --       },
+      --     },
+      --   },
+      --   on_attach = function(client, bufnr)
+      --     inlayhints.on_attach(client, bufnr)
+      --   end,
+      -- }
       -- Add additional LSP server configurations here
       -- Enable inlay hints for other servers if supported
       vim.api.nvim_create_autocmd('LspAttach', {
