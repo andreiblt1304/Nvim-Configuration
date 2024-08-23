@@ -44,10 +44,12 @@ return {
       -- Set up mason
       require('mason').setup()
       require('mason-lspconfig').setup {
-        ensure_installed = { 'rust_analyzer' }, -- Add other LSP servers here
+        ensure_installed = { 'rust_analyzer', 'gopls' }, -- Add other LSP servers here
       }
+
       local lspconfig = require 'lspconfig'
       local inlayhints = require 'lsp-inlayhints'
+
       -- Enable inlay hints for Rust Analyzer
       lspconfig.rust_analyzer.setup {
         settings = {
@@ -224,5 +226,13 @@ return {
     config = function()
       require('window-picker').setup()
     end,
+    {
+      'iamcco/markdown-preview.nvim',
+      build = 'cd app && npm install',
+      ft = 'markdown',
+      config = function()
+        vim.g.mkdp_auto_start = 1
+      end,
+    },
   },
 }
