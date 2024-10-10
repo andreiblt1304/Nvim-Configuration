@@ -224,10 +224,12 @@ vim.opt.rtp:prepend(lazypath)
 --    :Lazy update
 
 local custom_plugins = require 'custom.plugins.init'
+local go_plugins = require 'custom.plugins.go'
 
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   custom_plugins,
+  go_plugins,
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -621,7 +623,7 @@ require('lazy').setup({
         -- clangd = {},
         gopls = {},
         -- pyright = {},
-        -- rust_analyzer = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -671,6 +673,20 @@ require('lazy').setup({
             -- by the server configuration above. Useful when disabling
             -- certain features of an LSP (for example, turning off formatting for tsserver)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+            if server_name == 'rust_analyzer' then
+              server.settings = {
+                ['rust-analyzer'] = {
+                  checkOnSave = {
+                    command = 'clippy', -- Enable clippy diagnostics
+                  },
+                  diagnostics = {
+                    enable = true,
+                    disabled = { 'unresolved-proc-macro' },
+                    enableExperimental = true,
+                  },
+                },
+              }
+            end
             require('lspconfig')[server_name].setup(server)
           end,
         },
