@@ -681,8 +681,8 @@ require('lazy').setup({
                   },
                   diagnostics = {
                     enable = true,
-                    disabled = { 'unresolved-proc-macro' },
-                    enableExperimental = true,
+                    -- disabled = { 'unresolved-proc-macro' },
+                    -- enableExperimental = true,
                   },
                 },
               }
