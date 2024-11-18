@@ -33,6 +33,11 @@ return {
       require('nvim-web-devicons').setup { default = true }
     end,
   },
+  -- {
+  --   'mrcjkb/rustaceanvim',
+  --   version = '^5', -- Recommended
+  --   lazy = false, -- This plugin is already lazy
+  -- },
   {
     'neovim/nvim-lspconfig',
     dependencies = {
@@ -49,51 +54,59 @@ return {
 
       local lspconfig = require 'lspconfig'
 
-      local my_lsp_config = {
-        inlay_hints = { enabled = true },
-      }
-
-      -- Function to toggle inlay_hints.enabled
-      function ToggleInlayHintsEnabled()
-        if my_lsp_config.inlay_hints.enabled then
-          my_lsp_config.inlay_hints.enabled = false
-          print 'Inlay hints disabled'
-        else
-          my_lsp_config.inlay_hints.enabled = true
-          print 'Inlay hints enabled'
-        end
-      end
-
       -- Key mapping to toggle inlay_hints.enabled
-      vim.keymap.set('n', '<leader>ti', ToggleInlayHintsEnabled, { desc = 'Toggle Inlay Hints' })
+      -- vim.keymap.set('n', '<leader>ti', ToggleInlayHintsEnabled, { desc = 'Toggle Inlay Hints' })
 
       -- Enable inlay hints for Rust Analyzer
+
+      require('lsp-inlayhints').setup()
       lspconfig.rust_analyzer.setup {
         settings = {
           ['rust-analyzer'] = {
             inlayHints = {
-              enable = true,
-              typeHints = true,
-              parameterHints = true,
-              chainingHints = true,
+              enabled = true,
+              bindingModeHints = {
+                enable = false,
+              },
+              chainingHints = {
+                enable = true,
+              },
+              closingBraceHints = {
+                enable = true,
+                minLines = 25,
+              },
+              closureReturnTypeHints = {
+                enable = 'never',
+              },
+              lifetimeElisionHints = {
+                enable = 'never',
+                useParameterNames = false,
+              },
+              maxLength = 25,
+              parameterHints = {
+                enable = true,
+              },
+              reborrowHints = {
+                enable = 'never',
+              },
+              renderColons = true,
+              typeHints = {
+                enable = true,
+                hideClosureInitialization = false,
+                hideNamedConstructor = false,
+              },
             },
           },
         },
       }
-
-      -- Autocommand to enable inlay hints on LSP attach if supported
-      vim.api.nvim_create_autocmd('LspAttach', {
-        group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-        callback = function(args)
-          local client = vim.lsp.get_client_by_id(args.data.client_id)
-          if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
-            vim.lsp.inlay_hint(args.buf, my_lsp_config.inlay_hints.enabled)
-          else
-            print 'Inlay hints are not supported in this version of Neovim or the server.'
-          end
-          -- other lsp configurations you might want
-        end,
-      })
+    end,
+  },
+  {
+    'MysticalDevil/inlay-hints.nvim',
+    event = 'LspAttach',
+    dependencies = { 'neovim/nvim-lspconfig' },
+    config = function()
+      require('inlay-hints').setup()
     end,
   },
   {
