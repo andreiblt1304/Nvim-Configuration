@@ -48,7 +48,24 @@ return {
       }
 
       local lspconfig = require 'lspconfig'
-      local inlayhints = require 'lsp-inlayhints'
+
+      local my_lsp_config = {
+        inlay_hints = { enabled = true },
+      }
+
+      -- Function to toggle inlay_hints.enabled
+      function ToggleInlayHintsEnabled()
+        if my_lsp_config.inlay_hints.enabled then
+          my_lsp_config.inlay_hints.enabled = false
+          print 'Inlay hints disabled'
+        else
+          my_lsp_config.inlay_hints.enabled = true
+          print 'Inlay hints enabled'
+        end
+      end
+
+      -- Key mapping to toggle inlay_hints.enabled
+      vim.keymap.set('n', '<leader>ti', ToggleInlayHintsEnabled, { desc = 'Toggle Inlay Hints' })
 
       -- Enable inlay hints for Rust Analyzer
       lspconfig.rust_analyzer.setup {
@@ -62,18 +79,17 @@ return {
             },
           },
         },
-        on_attach = function(client, bufnr)
-          inlayhints.on_attach(client, bufnr)
-        end,
       }
-      -- Add additional LSP server configurations here
-      -- Enable inlay hints for other servers if supported
+
+      -- Autocommand to enable inlay hints on LSP attach if supported
       vim.api.nvim_create_autocmd('LspAttach', {
         group = vim.api.nvim_create_augroup('UserLspConfig', {}),
         callback = function(args)
           local client = vim.lsp.get_client_by_id(args.data.client_id)
-          if client.server_capabilities.inlayHintProvider then
-            vim.lsp.inlay_hint(args.buf, true)
+          if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+            vim.lsp.inlay_hint(args.buf, my_lsp_config.inlay_hints.enabled)
+          else
+            print 'Inlay hints are not supported in this version of Neovim or the server.'
           end
           -- other lsp configurations you might want
         end,
