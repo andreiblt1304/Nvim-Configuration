@@ -11,8 +11,6 @@ Kickstart.nvim is a template for your own configuration.
 
   Once you've done that, you should start exploring, configuring and tinkering to
   explore Neovim!
-  // tests
-
 
   If you don't know anything about Lua, I recommend taking some time to read through
   a guide. One possible example:
