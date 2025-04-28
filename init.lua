@@ -497,14 +497,14 @@ require('lazy').setup {
         on_attach = function(bufnr)
           local gs = package.loaded.gitsigns
 
-          local function map(mode, l, r, opts)
+          local function gs_map(mode, lhs, rhs, opts)
             opts = opts or {}
             opts.buffer = bufnr
-            vim.keymap.set(mode, l, r, opts)
+            vim.keymap.set(mode, lhs, rhs, opts)
           end
 
           -- Navigation
-          map({ 'n', 'v' }, ']c', function()
+          gs_map({ 'n', 'v' }, ']c', function()
             if vim.wo.diff then
               return ']c'
             end
@@ -514,7 +514,7 @@ require('lazy').setup {
             return '<Ignore>'
           end, { expr = true, desc = 'Jump to next hunk' })
 
-          map({ 'n', 'v' }, '[c', function()
+          gs_map({ 'n', 'v' }, '[c', function()
             if vim.wo.diff then
               return '[c'
             end
@@ -526,50 +526,50 @@ require('lazy').setup {
 
           -- Actions
           -- visual mode
-          map('v', '<leader>hs', function()
+          gs_map('v', '<leader>hs', function()
             gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
           end, { desc = 'stage git hunk' })
-          map('v', '<leader>hr', function()
+          gs_map('v', '<leader>hr', function()
             gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
           end, { desc = 'reset git hunk' })
           -- normal mode
-          map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
-          map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
-          map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
-          map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
-          map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
-          map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
-          map('n', '<leader>hb', function()
+          gs_map('n', '<leader>hs', gs.stage_hunk, { desc = 'git stage hunk' })
+          gs_map('n', '<leader>hr', gs.reset_hunk, { desc = 'git reset hunk' })
+          gs_map('n', '<leader>hS', gs.stage_buffer, { desc = 'git Stage buffer' })
+          gs_map('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'undo stage hunk' })
+          gs_map('n', '<leader>hR', gs.reset_buffer, { desc = 'git Reset buffer' })
+          gs_map('n', '<leader>hp', gs.preview_hunk, { desc = 'preview git hunk' })
+          gs_map('n', '<leader>hb', function()
             gs.blame_line { full = false }
           end, { desc = 'git blame line' })
-          map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
-          map('n', '<leader>hD', function()
+          gs_map('n', '<leader>hd', gs.diffthis, { desc = 'git diff against index' })
+          gs_map('n', '<leader>hD', function()
             gs.diffthis '~'
           end, { desc = 'git diff against last commit' })
 
           -- Toggles
-          map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
-          map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+          gs_map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'toggle git blame line' })
+          gs_map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          gs_map('n', '<leader>ds', require('telescope.builtin').lsp_document_symbols, { desc = '[D]ocument [S]ymbols' })
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
-          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          gs_map('n', '<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, { desc = '[W]orkspace [S]ymbols' })
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
-          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+          gs_map('n', '<leader>rn', vim.lsp.buf.rename, { desc = '[R]e[n]ame' })
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+          gs_map({ 'n', 'x' }, '<leader>ca', vim.lsp.buf.code_action, { desc = '[C]ode [A]ction' })
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          gs_map('n', 'gD', vim.lsp.buf.declaration, { desc = '[G]oto [D]eclaration' })
 
           -- This function resolves a difference between neovim nightly (version 0.11) and stable (version 0.10)
           ---@param client vim.lsp.Client
@@ -589,36 +589,36 @@ require('lazy').setup {
           --    See `:help CursorHold` for information about when this is executed
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
-          local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
-            local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
-            vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.document_highlight,
-            })
-
-            vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
-              buffer = event.buf,
-              group = highlight_augroup,
-              callback = vim.lsp.buf.clear_references,
-            })
-
-            vim.api.nvim_create_autocmd('LspDetach', {
-              group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
-              callback = function(event2)
-                vim.lsp.buf.clear_references()
-                vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
-              end,
-            })
-          end
+          -- local client = vim.lsp.get_client_by_id(event.data.client_id)
+          -- if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
+          --   local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
+          --   vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
+          --     buffer = event.buf,
+          --     group = highlight_augroup,
+          --     callback = vim.lsp.buf.document_highlight,
+          --   })
+          --
+          --   vim.api.nvim_create_autocmd({ 'CursorMoved', 'CursorMovedI' }, {
+          --     buffer = event.buf,
+          --     group = highlight_augroup,
+          --     callback = vim.lsp.buf.clear_references,
+          --   })
+          --
+          --   vim.api.nvim_create_autocmd('LspDetach', {
+          --     group = vim.api.nvim_create_augroup('kickstart-lsp-detach', { clear = true }),
+          --     callback = function(event2)
+          --       vim.lsp.buf.clear_references()
+          --       vim.api.nvim_clear_autocmds { group = 'kickstart-lsp-highlight', buffer = event2.buf }
+          --     end,
+          --   })
+          -- end
 
           -- The following code creates a keymap to toggle inlay hints in your
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
           if client and client_supports_method(client, vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
-            map('<leader>th', function()
+            gs_map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
           end
