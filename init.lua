@@ -487,7 +487,7 @@ require('lazy').setup {
       'lewis6991/gitsigns.nvim',
       opts = {
         -- See `:help gitsigns.txt`
-          -  -- helper created by Kickstart but edited here earlier
+        -- helper created by Kickstart but edited here earlier
         signs = {
           add = { text = '+' },
 
